@@ -9,3 +9,18 @@ services:
     volumes:
     - ./app:/app
     command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - DB_HOST=db
+      - DB_NAME=mesghal
+      - DB_USER=mesghal
+      - DB_PASS=mesghal
+    entrypoint: /docker-entrypoint.sh
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=mesghal
+      - POSTGRES_PASSWORD=mesghal
+      - POSTGRES_DB=mesghal

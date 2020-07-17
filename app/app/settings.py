@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     # 3rd Party
     'rest_framework',
+    'drf_yasg',
 
     # LOCAL
     'core.apps.CoreConfig',

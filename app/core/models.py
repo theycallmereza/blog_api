@@ -23,5 +23,8 @@ class Post(models.Model):
     udt = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-cdt']
+
     def __str__(self):
         return self.title

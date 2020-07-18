@@ -1,9 +1,14 @@
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework import pagination
 
 from core.models import Category, Post
 
 from .serializers import CategorySerializer, PostSerializer
+
+
+class PaginationClass(pagination.PageNumberPagination):
+    page_size = 5
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -28,6 +33,7 @@ class PostViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'content', 'category__name']
     ordering_fields = ['title', 'status', 'cdt', 'udt', 'category__name']
+    pagination_class = PaginationClass
 
     def get_queryset(self):
         status = bool(

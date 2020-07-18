@@ -131,3 +131,34 @@ class PostTests(TestCase):
 
         self.assertNotIn(serializer2.data, response.data)
         self.assertIn(serializer1.data, response.data)
+
+    def test_search_posts(self):
+        """Test searching posts with a query"""
+        category = sample_category()
+        post1 = sample_post(category, title="Post One")
+        post2 = sample_post(category, title="Post Two")
+
+        response = self.client.get(POST_URL, {'search': 'One'})
+
+        serializer1 = PostSerializer(post1)
+        serializer2 = PostSerializer(post2)
+
+        self.assertIn(serializer1.data, response.data)
+        self.assertNotIn(serializer2.data, response.data)
+
+    def test_ordering_posts(self):
+        """Test ordering posts with fields"""
+        category = sample_category()
+        post2 = sample_post(category, title='BBB')
+        post3 = sample_post(category, title='BBB')
+        post1 = sample_post(category, title='AAA')
+
+        response = self.client.get(POST_URL, {'ordering': 'title,-cdt'})
+
+        serializer1 = PostSerializer(post1)
+        serializer2 = PostSerializer(post2)
+        serializer3 = PostSerializer(post3)
+
+        self.assertEqual(response.data[0], serializer1.data)
+        self.assertEqual(response.data[1], serializer3.data)
+        self.assertEqual(response.data[2], serializer2.data)

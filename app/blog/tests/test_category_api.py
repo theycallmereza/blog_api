@@ -2,9 +2,9 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from django.urls import reverse
 from rest_framework import status
-from core.models import Category
+from core.models import Category, Post
 
-from ..serializers import CategorySerializer
+from ..serializers import CategorySerializer, PostSerializer
 
 CATEGORY_URL = reverse('blog:category-list')
 
@@ -64,3 +64,20 @@ class CategoryTests(TestCase):
 
         self.assertNotIn(serializer2.data, response.data)
         self.assertIn(serializer1.data, response.data)
+
+    def test_get_posts_related_to_category(self):
+        """Test get posts related to a category"""
+        category1 = Category.objects.create(name="Category One")
+        category2 = Category.objects.create(name="Category Two")
+        Post.objects.create(title="Post One", content="Some Text",
+                            category=category1)
+        Post.objects.create(title="Post Two", content="Some Text",
+                            category=category2)
+
+        url = reverse("blog:category-posts", args=[category1.id])
+
+        response = self.client.get(url)
+
+        serializer = PostSerializer(category1.post_set.all(), many=True)
+
+        self.assertEqual(response.data, serializer.data)

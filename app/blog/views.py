@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import pagination
+from rest_framework.decorators import action
+from rest_framework import response
 
 from core.models import Category, Post
 
@@ -25,6 +27,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(status=True)
 
         return queryset
+
+    @action(methods=['GET'], detail=True, url_path='posts',
+            url_name="posts")
+    def posts(self, request, pk=None):
+        category = self.get_object()
+        posts = category.post_set.all()
+        serializer = PostSerializer(posts, many=True)
+        return response.Response(serializer.data)
 
 
 class PostViewSet(viewsets.ModelViewSet):

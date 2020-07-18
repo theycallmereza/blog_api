@@ -4,9 +4,9 @@ from rest_framework import pagination
 from rest_framework.decorators import action
 from rest_framework import response
 
-from core.models import Category, Post
+from core.models import Category, Post, Tag
 
-from .serializers import CategorySerializer, PostSerializer
+from .serializers import CategorySerializer, PostSerializer, TagSerializer
 
 
 class PaginationClass(pagination.PageNumberPagination):
@@ -18,14 +18,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
     def get_queryset(self):
-        status = bool(
-            int(self.request.query_params.get('status', 0))
-        )
+        status = int(self.request.query_params.get('status', 0))
         queryset = self.queryset
-
         if status:
-            queryset = queryset.filter(status=True)
-
+            queryset = queryset.filter(status=status)
         return queryset
 
     @action(methods=['GET'], detail=True, url_path='posts',
@@ -46,12 +42,14 @@ class PostViewSet(viewsets.ModelViewSet):
     pagination_class = PaginationClass
 
     def get_queryset(self):
-        status = bool(
-            int(self.request.query_params.get('status', 0))
-        )
+        status = self.request.query_params.get('status', None)
         queryset = self.queryset
-
-        if status:
-            queryset = queryset.filter(status=True)
-
+        if status is not None:
+            int(status)
+            queryset = queryset.filter(status=status)
         return queryset
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

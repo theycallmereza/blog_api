@@ -130,7 +130,7 @@ class PostTests(TestCase):
         """Test filtering posts with status true"""
         category = sample_category()
         post1 = sample_post(category)
-        post2 = sample_post(category, status=False)
+        post2 = sample_post(category, status=0)
 
         response = self.client.get(POST_URL, {'status': 1})
 

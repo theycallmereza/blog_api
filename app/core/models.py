@@ -44,7 +44,8 @@ class Post(models.Model):
     cdt = models.DateTimeField(auto_now_add=True)
     udt = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag, related_name='posts')
+    tags = models.ManyToManyField(Tag, related_name='posts',
+                                  blank=True)
 
     class Meta:
         ordering = ['-cdt']

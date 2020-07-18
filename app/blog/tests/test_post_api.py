@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from core.models import Category, Post
+from core.models import Category, Post, Tag
 
 from ..serializers import PostSerializer
 
@@ -20,6 +20,11 @@ def detail_url(post_id):
 def sample_category(name='Category Test'):
     """Create and return a sample category"""
     return Category.objects.create(name=name)
+
+
+def sample_tag(name='Main course'):
+    """Create and return sample tag"""
+    return Tag.objects.create(name=name)
 
 
 def sample_post(category, **params):
@@ -102,11 +107,12 @@ class PostTests(TestCase):
     def test_full_update_post(self):
         """Test updating post with PUT"""
         post = sample_post(sample_category())
+        post.tags.add(sample_tag())
 
         payload = {
             'title': 'Update Title',
             'content': 'Update Content',
-            'status': False,
+            'status': 0,
             'category': sample_category('Update Category').id
         }
 

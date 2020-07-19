@@ -1,4 +1,3 @@
-import json
 from django.test import TestCase
 from django.urls import reverse
 
@@ -53,10 +52,9 @@ class PostTests(TestCase):
 
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
-        json_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json_data['results'], serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_post_detail_view(self):
         """Test viewing post detail"""
@@ -137,10 +135,8 @@ class PostTests(TestCase):
         serializer1 = PostSerializer(post1)
         serializer2 = PostSerializer(post2)
 
-        json_data = json.loads(response.content)
-
-        self.assertNotIn(serializer2.data, json_data['results'])
-        self.assertIn(serializer1.data, json_data['results'])
+        self.assertNotIn(serializer2.data, response.data['results'])
+        self.assertIn(serializer1.data, response.data['results'])
 
     def test_search_posts(self):
         """Test searching posts with a query"""
@@ -153,10 +149,8 @@ class PostTests(TestCase):
         serializer1 = PostSerializer(post1)
         serializer2 = PostSerializer(post2)
 
-        json_data = json.loads(response.content)
-
-        self.assertIn(serializer1.data, json_data['results'])
-        self.assertNotIn(serializer2.data, json_data['results'])
+        self.assertIn(serializer1.data, response.data['results'])
+        self.assertNotIn(serializer2.data, response.data['results'])
 
     def test_ordering_posts(self):
         """Test ordering posts with fields"""
@@ -171,11 +165,9 @@ class PostTests(TestCase):
         serializer2 = PostSerializer(post2)
         serializer3 = PostSerializer(post3)
 
-        json_data = json.loads(response.content)
-
-        self.assertEqual(json_data['results'][0], serializer1.data)
-        self.assertEqual(json_data['results'][1], serializer3.data)
-        self.assertEqual(json_data['results'][2], serializer2.data)
+        self.assertEqual(response.data['results'][0], serializer1.data)
+        self.assertEqual(response.data['results'][1], serializer3.data)
+        self.assertEqual(response.data['results'][2], serializer2.data)
 
     def test_post_pagination(self):
         """Test post pagination"""
@@ -190,8 +182,5 @@ class PostTests(TestCase):
         response1 = self.client.get(POST_URL, {'page': 1})
         response2 = self.client.get(POST_URL, {'page': 2})
 
-        json_data1 = json.loads(response1.content)
-        json_data2 = json.loads(response2.content)
-
-        self.assertEqual(len(json_data1['results']), 5)
-        self.assertEqual(len(json_data2['results']), 1)
+        self.assertEqual(len(response1.data['results']), 5)
+        self.assertEqual(len(response2.data['results']), 1)

@@ -12,4 +12,7 @@ app_name = 'blog'
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('tags/<int:pk>/posts/',
+         views.PostsTagAPIVew.as_view(),
+         name='posts-tag'),
 ]
